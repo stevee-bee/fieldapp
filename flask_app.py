@@ -27,6 +27,24 @@ db = SQLAlchemy(app)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello from Flask!'
-
+@app.route('/index')
+def index():
+    user = {'username': 'Dana'}
+    fields = [
+        {
+            'number': 1,
+            'name': 'Unger',
+            'land_loc': 'SW 24-18-11'
+        },
+        {
+            'number': 2,
+            'name': 'Home West',
+            'land_loc': 'NW 13-18-11'
+        },
+        {
+            'number': 3,
+            'name': 'Home Half',
+            'land_loc': 'NE 13-18-11'
+        }
+    ]
+    return render_template('index.html', user=user, fields=fields)
