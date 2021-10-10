@@ -18,17 +18,60 @@ from forms import LoginForm
 app = Flask(__name__)
 app.config.from_object(Config)
 
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
-    username="dse",
-    password="Ap4tW!veyHp35nM5",
-    hostname="dse.mysql.pythonanywhere-services.com",
-    databasename="dse$fma",
-)
-app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
+migrate = Migrate(app, db)
+
+
+
+###################
+###   models    ###
+###################
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+    password_hash = db.Column(db.String(128))
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+
+class Field(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer, index=True, unique=True)
+    name = db.Column(db.String(32))
+    land_loc = db.Column(db.String(32))
+    comment = db.Column(db.String(255))
+    seeds = db.relationship('Seed', backref='field', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Field {} "{}">'.format(self.number, self.name)
+
+
+class Seed(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    date_seeded = db.Column(db.Date, default=datetime.utcnow)
+    date_harvested = db.Column(db.Date)
+    bu_yield = db.Column(db.Numeric(4,1))
+    comment = db.Column(db.String(255))
+    field_id = db.Column(db.Integer, db.ForeignKey('field.id'))
+
+    def __repr__(self):
+        return '<Seed {}>'.format(self.name)
+
+
+
+###################
+### decorators  ###
+###################
+
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'User': User, 'Field': Field, 'Seed': Seed}
+
+
 
 ###################
 ###    views    ###
@@ -37,7 +80,7 @@ db = SQLAlchemy(app)
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'username': 'Dana'}
+    user = {'username': 'Dana', 'email': 'dbschindel@hotmail.com'}
     fields = [
         {
             'number': 1,
