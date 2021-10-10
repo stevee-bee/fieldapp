@@ -3,15 +3,20 @@
 # based on reference article: https://blog.pythonanywhere.com/121/
 # modified for DSE
 
+# external packages
 from datetime import datetime
-from flask import Flask, redirect, render_template, request, url_for
+from flask import flash, Flask, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, LoginManager, logout_user, UserMixin
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 
+# internal packages
+from config import Config
+from forms import LoginForm
+
 app = Flask(__name__)
-app.config["DEBUG"] = True
+app.config.from_object(Config)
 
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
     username="dse",
@@ -25,6 +30,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 # migrate = Migrate(app, db)
 
+###################
+###    views    ###
+###################
 
 @app.route('/')
 @app.route('/index')
@@ -48,3 +56,12 @@ def index():
         }
     ]
     return render_template('index.html', user=user, fields=fields)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.username.data, form.remember_me.data))
+        return redirect(url_for('index'))
+    return render_template('login.html', form=form)
