@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -41,7 +40,7 @@ class Field(db.Model):
 class Seed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
-    date_seeded = db.Column(db.Date, default=datetime.utcnow)
+    date_seeded = db.Column(db.Date)
     date_harvested = db.Column(db.Date)
     bu_yield = db.Column(db.Numeric(4,1))
     comment = db.Column(db.String(255))

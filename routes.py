@@ -3,32 +3,15 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from flask_app import app, db
-from forms import LoginForm, RegistrationForm
-from models import User
+from forms import LoginForm, RegistrationForm, FieldForm
+from models import User, Field
 
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    fields = [
-        {
-            'number': 1,
-            'name': 'Unger',
-            'land_loc': 'SW 24-18-11'
-        },
-        {
-            'number': 2,
-            'name': 'Home West',
-            'land_loc': 'NW 13-18-11'
-        },
-        {
-            'number': 3,
-            'name': 'Home Half',
-            'land_loc': 'NE 13-18-11'
-        }
-    ]
-    return render_template('index.html', fields=fields)
+    return render_template('index.html', fields=Field.query.all())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -65,3 +48,21 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+@app.route('/addfield', methods=['GET', 'POST'])
+@login_required
+def addfield():
+    form = FieldForm()
+    if form.validate_on_submit():
+        field = Field(
+            number = form.number.data,
+            name = form.name.data,
+            land_loc = form.land_loc.data,
+            comment = form.comment.data
+        )
+        db.session.add(field)
+        db.session.commit()
+        flash('New field #{} "{}" successfully added.'.format(form.number.data,form.name.data))
+        return redirect(url_for('index'))
+    return render_template('addfield.html', form=form)
+

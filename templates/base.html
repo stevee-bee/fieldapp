@@ -6,7 +6,9 @@
     <body>
         <div>
             Field Management App:
-            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('index') }}">Fields</a>
+            {% endif %}
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
             {% else %}
