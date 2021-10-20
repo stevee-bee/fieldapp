@@ -32,6 +32,7 @@ class Field(db.Model):
     land_loc = db.Column(db.String(32))
     comment = db.Column(db.String(255))
     seeds = db.relationship('Seed', backref='field', lazy='dynamic')
+    chemicals = db.relationship('Chemical', backref='field', lazy='dynamic')
 
     def __repr__(self):
         return '<Field {} "{}">'.format(self.number, self.name)
@@ -40,11 +41,25 @@ class Field(db.Model):
 class Seed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
-    date_seeded = db.Column(db.Date)
-    date_harvested = db.Column(db.Date)
+    date_seeded = db.Column(db.Date, index=True)
+    date_harvested = db.Column(db.Date, index=True)
     bu_yield = db.Column(db.Numeric(4,1))
     comment = db.Column(db.String(255))
     field_id = db.Column(db.Integer, db.ForeignKey('field.id'))
 
     def __repr__(self):
         return '<Seed {}>'.format(self.name)
+
+
+class Chemical(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer, index=True)
+    name = db.Column(db.String(32))
+    date_applied = db.Column(db.Date, index=True)
+    rate = db.Column(db.Integer)
+    wind_dir = db.Column(db.String(10))
+    comment = db.Column(db.String(255))
+    field_id = db.Column(db.Integer, db.ForeignKey('field.id'))
+
+    def __repr__(self):
+        return '<Chemical {}>'.format(self.name)

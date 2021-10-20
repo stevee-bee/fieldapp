@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
     {% if fields %}
-    <p>List of fields by quarter section:</p>
+    <p>List of fields.</p>
     <table border=1>
-        <tr><th>Number</th><th>Name</th><th>Land Location</th><th>Edit</th></tr>
+        <tr><th>Number-Name</th><th>Land Location</th><th>Seed</th></tr>
         {% for field in fields %}
-        <tr><td>{{ field.number }}</td><td>{{ field.name }}</td><td>{{ field.land_loc }}</td><td></td></tr>
+        <tr>
+            <td><a href="{{ url_for('editfield', n=field.id) }}">{{ field.number }}-{{ field.name }}</a></td>
+            <td>{{ field.land_loc }}</td>
+            <td style="text-align:center"><a href="{{ url_for('addseed', n=field.id) }}"><img src="/static/images/greenplus18px.png"></a></td>
+        </tr>
         {% endfor %}
     </table>
     {% endif %}

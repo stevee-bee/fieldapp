@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>Field {{ field.number }} - {{ field.name }}</div>
+    <div>Land location: {{ field.land_loc }}</div>
+    <div>Comments:</div>
+    <div>{{ field.comments }}</div>
+    <hr>
+    <p>Add a seeded crop.</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name }}<br>
+            {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.date_seeded.label }}<br>
+            {{ form.date_seeded }}<br>
+            {% for error in form.date_seeded.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.comment.label }}<br>
+            {{ form.comment(cols=50, rows=4) }}<br>
+            {% for error in form.comment.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    <hr>
+    {% if seeds.count() %}
+    <p>Most recent at the top.</p>
+    <table border=1>
+        {% for seed in seeds %}
+        <tr>
+            <th>Date seeded</th>
+            <th>Seed</th>
+            <th>Date harvested</th>
+            <th>Yield (bu/ac)</th>
+        </tr>
+        <tr>
+            <td>{{ seed.date_seeded }}</td>
+            <td>{{ seed.name }}</td>
+            <td>{{ seed.date_harvested }}</td>
+            <td>{{ seed.bu_yield }}</td>
+        </tr>
+        <tr>
+            <td colspan=4>Comment: {{ seed.commentt }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+{% endblock %}

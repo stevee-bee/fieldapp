@@ -1,15 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p>Create a new field.</p>
+    <p>Modify field.</p>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.number.label }}<br>
-            {{ form.number }}<br>
-            {% for error in form.number.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
+            Field #{{ field.number }}
         </p>
         <p>
             {{ form.name.label }}<br>
@@ -32,6 +28,6 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>{{ form.submit(value='Create Field') }}</p>
+        <p>{{ form.submit(value='Save Changes') }}</p>
     </form>
 {% endblock %}

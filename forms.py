@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField, IntegerField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField, IntegerField, DateField, SelectField, DecimalField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 
 from models import User, Field
 
@@ -32,11 +32,11 @@ class RegistrationForm(FlaskForm):
 
 
 class FieldForm(FlaskForm):
-    number = IntegerField('Number', validators=[DataRequired()])
-    name = StringField('Name', validators=[DataRequired()])
+    number = IntegerField('Field number', validators=[DataRequired()])
+    name = StringField('Field name', validators=[DataRequired()])
     land_loc = StringField('Land location')
-    comment = TextAreaField('Comments')
-    submit = SubmitField('Create field')
+    comment = TextAreaField('Comments', validators=[Length(max=255)])
+    submit = SubmitField('Submit')
 
     def validate_number(self, number):
         field = Field.query.filter_by(number=number.data).first()
@@ -44,16 +44,21 @@ class FieldForm(FlaskForm):
             raise ValidationError('This field number is already used. Please enter a different number.')
 
 
-# class SeedForm(FlaskForm):
-#     seedname = StringField('Seed', validators=[DataRequired()])
-#     seeddate =
-#     harvestdate =
-#     harvestyield =
+class SeedForm(FlaskForm):
+    date_seeded = DateField('Date seeded', validators=[DataRequired()])
+    name = StringField('Seed', validators=[DataRequired()])
+    date_harvested = DateField('Date harvested')
+    bu_yield = DecimalField('Yield', places=1)
+    comment = TextAreaField('Comments', validators=[Length(max=255)])
+    submit = SubmitField('Save')
 
 
 # class ChemicalForm(FlaskForm):
-#     chemtype = ... validators=[AnyOf( -provide list from db- )] ...
-#     chemname =
+#     type = ... validators=[AnyOf(herbicide, fungicide, insecticide), DataRequired()] ...
+#     name =   validators=[DataRequired()]
+#     date_applied =    validators=[DataRequired()]
 #     rate =
-#     chemdate =
+#     wind_dir =
+#     comment = TextAreaField('Comments', validators=[Length(max=255)])
+#     submit = SubmitField('Save')
 
