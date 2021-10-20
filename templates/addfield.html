@@ -1,37 +1,11 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
+{% block app_content %}
     <p>Create a new field.</p>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.number.label }}<br>
-            {{ form.number }}<br>
-            {% for error in form.number.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.land_loc.label }}<br>
-            {{ form.land_loc }}<br>
-            {% for error in form.land_loc.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.comment.label }}<br>
-            {{ form.comment(cols=50, rows=4) }}<br>
-            {% for error in form.comment.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit(value='Create Field') }}</p>
-    </form>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
 {% endblock %}

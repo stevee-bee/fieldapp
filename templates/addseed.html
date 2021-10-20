@@ -1,41 +1,22 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
+{% block app_content %}
     <div>Field {{ field.number }} - {{ field.name }}</div>
     <div>Land location: {{ field.land_loc }}</div>
     <div>Comments:</div>
     <div>{{ field.comments }}</div>
     <hr>
     <p>Add a seeded crop.</p>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.date_seeded.label }}<br>
-            {{ form.date_seeded }}<br>
-            {% for error in form.date_seeded.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.comment.label }}<br>
-            {{ form.comment(cols=50, rows=4) }}<br>
-            {% for error in form.comment.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
     <hr>
     {% if seeds.count() %}
     <p>Most recent at the top.</p>
-    <table border=1>
+    <table class="table table-hover">
         {% for seed in seeds %}
         <tr>
             <th>Date seeded</th>
