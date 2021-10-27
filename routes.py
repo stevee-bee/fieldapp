@@ -3,8 +3,10 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from flask_app import app, db
-from forms import LoginForm, RegistrationForm, FieldForm, SeedForm
+from forms import LoginForm, RegistrationForm, FieldForm, SeedForm, FieldFormEdit
 from models import User, Field, Seed
+
+from datetime import datetime
 
 
 @app.route('/')
@@ -70,7 +72,7 @@ def addfield():
 @login_required
 def editfield(n):
     field = Field.query.get(n)
-    form = FieldForm()
+    form = FieldFormEdit()
     if form.validate_on_submit():
         field.name = form.name.data
         field.land_loc = form.land_loc.data
@@ -79,9 +81,12 @@ def editfield(n):
         flash('Field #{} "{}" successfully updated.'.format(form.number.data, form.name.data))
         return redirect(url_for('index'))
     elif request.method == 'GET':
+        form.number.data = field.number
         form.name.data = field.name
         form.land_loc.data = field.land_loc
         form.comment.data = field.comment
+    elif request.method == 'POST':
+        flash('invalid POST')
     return render_template('editfield.html', form=form, field=field)
 
 @app.route('/addseed/<n>', methods=['GET', 'POST'])
@@ -100,4 +105,5 @@ def addseed(n):
         db.session.commit()
     seeds = Seed.query.filter_by(field_id=field.id).order_by(Seed.date_seeded.desc())
     return render_template('addseed.html', form=form, field=field, seeds=seeds)
+
 

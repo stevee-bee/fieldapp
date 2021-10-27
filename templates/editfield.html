@@ -4,40 +4,10 @@
 -->
 
 {% block app_content %}
-    <p>Modify field.</p>
-<!--
+    <p>Modify field #{{ field.number }}.</p>
     <div class="row">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
         </div>
     </div>
--->
-<form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            Field #{{ field.number }}
-        </p>
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.land_loc.label }}<br>
-            {{ form.land_loc }}<br>
-            {% for error in form.land_loc.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.comment.label }}<br>
-            {{ form.comment(cols=50, rows=4) }}<br>
-            {% for error in form.comment.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit(value='Save Changes') }}</p>
-    </form>
 {% endblock %}

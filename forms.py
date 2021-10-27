@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField, IntegerField, DateField, SelectField, DecimalField
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField, IntegerField, DateField, DecimalField, HiddenField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 
 from models import User, Field
@@ -36,12 +36,20 @@ class FieldForm(FlaskForm):
     name = StringField('Field name', validators=[DataRequired()])
     land_loc = StringField('Land location')
     comment = TextAreaField('Comments', validators=[Length(max=255)])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Save')
 
     def validate_number(self, number):
         field = Field.query.filter_by(number=number.data).first()
         if field is not None:
             raise ValidationError('This field number is already used. Please enter a different number.')
+
+
+class FieldFormEdit(FlaskForm):
+    number = HiddenField('Field number', validators=[DataRequired()])
+    name = StringField('Field name', validators=[DataRequired()])
+    land_loc = StringField('Land location')
+    comment = TextAreaField('Comments', validators=[Length(max=255)])
+    submit = SubmitField('Save')
 
 
 class SeedForm(FlaskForm):
