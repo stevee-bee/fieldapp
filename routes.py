@@ -3,10 +3,8 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from flask_app import app, db
-from forms import LoginForm, RegistrationForm, FieldForm, SeedForm, FieldFormEdit
-from models import User, Field, Seed
-
-from datetime import datetime
+from forms import LoginForm, RegistrationForm, FieldForm, SeedFormAdd, FieldFormEdit, ChemicalForm
+from models import User, Field, Seed, Chemical
 
 
 @app.route('/')
@@ -93,7 +91,7 @@ def editfield(n):
 @login_required
 def addseed(n):
     field = Field.query.get(n)
-    form = SeedForm()
+    form = SeedFormAdd()
     if form.validate_on_submit():
         seed = Seed(
             date_seeded = form.date_seeded.data,
@@ -103,7 +101,32 @@ def addseed(n):
         )
         db.session.add(seed)
         db.session.commit()
+        seeds = Seed.query.filter_by(field_id=field.id).order_by(Seed.date_seeded.desc())
+        flash('{} seeded on {} successfully added.'.format(form.name.data, form.date_seeded.data))
+        return redirect(url_for('addseed', n=n))
     seeds = Seed.query.filter_by(field_id=field.id).order_by(Seed.date_seeded.desc())
     return render_template('addseed.html', form=form, field=field, seeds=seeds)
 
+@app.route('/addchem/<n>', methods=['GET', 'POST'])
+@login_required
+def addchem(n):
+    field = Field.query.get(n)
+    form = ChemicalForm()
+    if form.validate_on_submit():
+        chemical = Chemical(
+            type = form.type.data,
+            name = form.name.data,
+            date_applied = form.date_applied.data,
+            rate = form.rate.data,
+            wind_dir = form.wind_dir.data,
+            comment = form.comment.data,
+            field = field
+        )
+        db.session.add(chemical)
+        db.session.commit()
+        chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc())
+        flash('{} {} applied on {} successfully added.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
+        return redirect(url_for('addchem', n=n))
+    chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc())
+    return render_template('addchem.html', form=form, field=field, chemicals=chemicals)
 

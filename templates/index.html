@@ -8,12 +8,14 @@
             <th>Number-Name</th>
             <th>Land Location</th>
             <th style="text-align:center">Seed</th>
+            <th style="text-align:center">Chemical (not ready)</th>
         </tr>
         {% for field in fields %}
         <tr>
             <td><a href="{{ url_for('editfield', n=field.id) }}">{{ field.number }}-{{ field.name }}</a></td>
             <td>{{ field.land_loc }}</td>
             <td style="text-align:center"><a href="{{ url_for('addseed', n=field.id) }}"><img src="/static/images/greenplus18px.png"></a></td>
+            <td style="text-align:center"><a href="{{ url_for('addchem', n=field.id) }}"><img src="/static/images/greenplus18px.png"></a></td>
         </tr>
         {% endfor %}
     </table>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField, IntegerField, DateField, DecimalField, HiddenField
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, TextAreaField, IntegerField, DateField, DecimalField, HiddenField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 
 from models import User, Field
@@ -52,7 +52,14 @@ class FieldFormEdit(FlaskForm):
     submit = SubmitField('Save')
 
 
-class SeedForm(FlaskForm):
+class SeedFormAdd(FlaskForm):
+    date_seeded = DateField('Date seeded', validators=[DataRequired()])
+    name = StringField('Seed', validators=[DataRequired()])
+    comment = TextAreaField('Comments', validators=[Length(max=255)])
+    submit = SubmitField('Save')
+
+
+class SeedFormEdit(FlaskForm):
     date_seeded = DateField('Date seeded', validators=[DataRequired()])
     name = StringField('Seed', validators=[DataRequired()])
     date_harvested = DateField('Date harvested')
@@ -61,12 +68,11 @@ class SeedForm(FlaskForm):
     submit = SubmitField('Save')
 
 
-# class ChemicalForm(FlaskForm):
-#     type = ... validators=[AnyOf(herbicide, fungicide, insecticide), DataRequired()] ...
-#     name =   validators=[DataRequired()]
-#     date_applied =    validators=[DataRequired()]
-#     rate =
-#     wind_dir =
-#     comment = TextAreaField('Comments', validators=[Length(max=255)])
-#     submit = SubmitField('Save')
-
+class ChemicalForm(FlaskForm):
+    type = SelectField('Type', choices=[(0,'Fungicide'), (1,'Herbicide'), (2,'Insecticide')], validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    date_applied = DateField('Date applied', validators=[DataRequired()])
+    rate = DecimalField('Rate')
+    wind_dir = StringField('Wind direction')
+    comment = TextAreaField('Comments', validators=[Length(max=255)])
+    submit = SubmitField('Save')
