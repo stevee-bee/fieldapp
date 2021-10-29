@@ -4,7 +4,7 @@ from werkzeug.urls import url_parse
 
 from flask_app import app, db
 from forms import LoginForm, RegistrationForm, FieldForm, SeedFormAdd, FieldFormEdit, ChemicalForm
-from models import User, Field, Seed, Chemical
+from models import User, Field, Seed, Chemical, ChemicalType
 
 
 @app.route('/')
@@ -112,6 +112,7 @@ def addseed(n):
 def addchem(n):
     field = Field.query.get(n)
     form = ChemicalForm()
+    form.type.choices = [(g.id, g.name) for g in ChemicalType.query.order_by('name')]
     if form.validate_on_submit():
         chemical = Chemical(
             type = form.type.data,
@@ -124,9 +125,9 @@ def addchem(n):
         )
         db.session.add(chemical)
         db.session.commit()
-        chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc())
-        flash('{} {} applied on {} successfully added.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
+        chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc()).join(ChemicalType)
+        flash('{}, {}, applied on {} successfully added.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
         return redirect(url_for('addchem', n=n))
-    chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc())
+    chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc()).join(ChemicalType)
     return render_template('addchem.html', form=form, field=field, chemicals=chemicals)
 

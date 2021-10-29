@@ -13,8 +13,8 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    username = StringField('Username', validators=[DataRequired(), Length(max=64)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
@@ -33,8 +33,8 @@ class RegistrationForm(FlaskForm):
 
 class FieldForm(FlaskForm):
     number = IntegerField('Field number', validators=[DataRequired()])
-    name = StringField('Field name', validators=[DataRequired()])
-    land_loc = StringField('Land location')
+    name = StringField('Field name', validators=[DataRequired(), Length(max=32)])
+    land_loc = StringField('Land location', validators=[Length(max=32)])
     comment = TextAreaField('Comments', validators=[Length(max=255)])
     submit = SubmitField('Save')
 
@@ -46,22 +46,22 @@ class FieldForm(FlaskForm):
 
 class FieldFormEdit(FlaskForm):
     number = HiddenField('Field number', validators=[DataRequired()])
-    name = StringField('Field name', validators=[DataRequired()])
-    land_loc = StringField('Land location')
+    name = StringField('Field name', validators=[DataRequired(), Length(max=32)])
+    land_loc = StringField('Land location', validators=[Length(max=32)])
     comment = TextAreaField('Comments', validators=[Length(max=255)])
     submit = SubmitField('Save')
 
 
 class SeedFormAdd(FlaskForm):
     date_seeded = DateField('Date seeded', validators=[DataRequired()])
-    name = StringField('Seed', validators=[DataRequired()])
+    name = StringField('Seed', validators=[DataRequired(), Length(max=32)])
     comment = TextAreaField('Comments', validators=[Length(max=255)])
     submit = SubmitField('Save')
 
 
 class SeedFormEdit(FlaskForm):
     date_seeded = DateField('Date seeded', validators=[DataRequired()])
-    name = StringField('Seed', validators=[DataRequired()])
+    name = StringField('Seed', validators=[DataRequired(), Length(max=32)])
     date_harvested = DateField('Date harvested')
     bu_yield = DecimalField('Yield', places=1)
     comment = TextAreaField('Comments', validators=[Length(max=255)])
@@ -69,10 +69,10 @@ class SeedFormEdit(FlaskForm):
 
 
 class ChemicalForm(FlaskForm):
-    type = SelectField('Type', choices=[(0,'Fungicide'), (1,'Herbicide'), (2,'Insecticide')], validators=[DataRequired()])
-    name = StringField('Name', validators=[DataRequired()])
+    type = SelectField('Type', coerce=int)
+    name = StringField('Name', validators=[DataRequired(), Length(max=25)])
     date_applied = DateField('Date applied', validators=[DataRequired()])
-    rate = DecimalField('Rate')
-    wind_dir = StringField('Wind direction')
+    rate = StringField('Rate', validators=[Length(max=16)])
+    wind_dir = StringField('Wind direction', validators=[Length(max=10)])
     comment = TextAreaField('Comments', validators=[Length(max=255)])
     submit = SubmitField('Save')

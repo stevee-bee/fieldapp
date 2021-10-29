@@ -13,8 +13,8 @@
             {{ wtf.quick_form(form) }}
         </div>
     </div>
-    <hr>
     {% if chemicals.count() %}
+    <hr>
     <p>Most recent at the top.</p>
     <table class="table table-hover">
         <tr>
@@ -28,7 +28,7 @@
         {% for chemical in chemicals %}
         <tr>
             <td>{{ chemical.date_applied }}</td>
-            <td>{{ chemical.type }}</td>
+            <td>{{ chemical.chemical_type.name }}</td>
             <td>{{ chemical.name }}</td>
             <td>{{ chemical.rate }}</td>
             <td>{{ chemical.wind_dir }}</td>

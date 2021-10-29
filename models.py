@@ -53,13 +53,22 @@ class Seed(db.Model):
 
 class Chemical(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Integer, index=True)
-    name = db.Column(db.String(32))
+    type = db.Column(db.Integer, db.ForeignKey('chemical_type.id'))
+    name = db.Column(db.String(25))
     date_applied = db.Column(db.Date, index=True)
-    rate = db.Column(db.Integer)
+    rate = db.Column(db.String(16))
     wind_dir = db.Column(db.String(10))
     comment = db.Column(db.String(255))
     field_id = db.Column(db.Integer, db.ForeignKey('field.id'))
 
     def __repr__(self):
         return '<Chemical {}>'.format(self.name)
+
+
+class ChemicalType(db.Model):
+
+    __tablename__ = "chemical_type"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(25))
+    chemicals = db.relationship('Chemical', backref='chemical_type', lazy='dynamic')
