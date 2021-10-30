@@ -3,7 +3,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from flask_app import app, db
-from forms import LoginForm, RegistrationForm, FieldForm, SeedFormAdd, FieldFormEdit, ChemicalForm
+from forms import LoginForm, RegistrationForm, FieldForm, SeedFormAdd, FieldFormEdit, ChemicalForm, SeedFormEdit
 from models import User, Field, Seed, Chemical, ChemicalType
 
 
@@ -72,9 +72,11 @@ def editfield(n):
     field = Field.query.get(n)
     form = FieldFormEdit()
     if form.validate_on_submit():
-        field.name = form.name.data
-        field.land_loc = form.land_loc.data
-        field.comment = form.comment.data
+        field = Field(
+            name = form.name.data,
+            land_loc = form.land_loc.data,
+            comment = form.comment.data
+        )
         db.session.commit()
         flash('Field #{} "{}" successfully updated.'.format(form.number.data, form.name.data))
         return redirect(url_for('index'))
@@ -107,6 +109,33 @@ def addseed(n):
     seeds = Seed.query.filter_by(field_id=field.id).order_by(Seed.date_seeded.desc())
     return render_template('addseed.html', form=form, field=field, seeds=seeds)
 
+@app.route('/editseed/<n>', methods=['GET', 'POST'])
+@login_required
+def editseed(n):
+    seed = Seed.query.get(n)
+    form = SeedFormEdit()
+    if form.validate_on_submit():
+        seed = Seed(
+            date_seeded = form.date_seeded.data,
+            name = form.name.data,
+            date_harvested = form.date_harvested.data,
+            bu_yield = form.bu_yield.data,
+            comment = form.comment.data
+        )
+        db.session.commit()
+        flash('{} in field {} seeded on {} successfully updated.'.format(form.name.data, seed.field_id, form.date_seeded.data))
+        return redirect(url_for('addseed', n=seed.field_id))
+    elif request.method == 'GET':
+        form.date_seeded.data = seed.date_seeded
+        form.name.data = seed.name
+        form.date_harvested.data = seed.date_harvested
+        form.bu_yield.data = seed.bu_yield
+        form.comment.data = seed.comment
+    elif request.method == 'POST':
+        flash('invalid POST')
+    field = Field.query.get(seed.field_id)
+    return render_template('editseed.html', form=form, field=field, seed=seed)
+
 @app.route('/addchem/<n>', methods=['GET', 'POST'])
 @login_required
 def addchem(n):
@@ -131,3 +160,32 @@ def addchem(n):
     chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc()).join(ChemicalType)
     return render_template('addchem.html', form=form, field=field, chemicals=chemicals)
 
+@app.route('/editchem/<n>', methods=['GET', 'POST'])
+@login_required
+def editchem(n):
+    chemical = Chemical.query.get(n)
+    form = ChemicalForm()
+    form.type.choices = [(g.id, g.name) for g in ChemicalType.query.order_by('name')]
+    if form.validate_on_submit():
+        chemical = Chemical(
+            type = form.type.data,
+            name = form.name.data,
+            date_applied = form.date_applied.data,
+            rate = form.rate.data,
+            wind_dir = form.wind_dir.data,
+            comment = form.comment.data
+        )
+        db.session.commit()
+        flash('{}, {}, applied on {} successfully updated.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
+        return redirect(url_for('addchem', n=chemical.field_id))
+    elif request.method == 'GET':
+        form.type.data = chemical.type
+        form.name.data = chemical.name
+        form.date_applied.data = chemical.date_applied
+        form.rate.data = chemical.rate
+        form.wind_dir.data = chemical.wind_dir
+        form.comment.data = chemical.comment
+    elif request.method == 'POST':
+        flash('invalid POST')
+    field = Field.query.get(chemical.field_id)
+    return render_template('editchem.html', form=form, field=field, chemical=chemical)

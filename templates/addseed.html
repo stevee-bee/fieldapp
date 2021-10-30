@@ -22,19 +22,18 @@
             <th>Seed</th>
             <th>Date harvested</th>
             <th>Yield (bu/ac)</th>
-            <th>Edit (coming soon)</th>
         </tr>
         {% for seed in seeds %}
         <tr>
             <td>{{ seed.date_seeded }}</td>
+            <!--<td><a href="{{ url_for('editseed', n=seed.id) }}">{{ seed.date_seeded }}</a></td>-->
             <td>{{ seed.name }}</td>
             <td>{{ seed.date_harvested }}</td>
             <td>{{ seed.bu_yield }}</td>
-            <td></td>
         </tr>
         <tr>
             <td style="text-align:right">Comment:</td>
-            <td colspan=4>{{ seed.comment }}</td>
+            <td colspan=3>{{ seed.comment }}</td>
         </tr>
         {% endfor %}
     </table>

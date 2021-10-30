@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div>Field {{ field.number }} - {{ field.name }}</div>
+    <div>Land location: {{ field.land_loc }}</div>
+    <div>Comments:</div>
+    <div>{{ field.comments }}</div>
+    <hr>
+    <p>Modify applied chemical.</p>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+{% endblock %}
