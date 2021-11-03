@@ -9,9 +9,13 @@ from models import User, Field, Seed, Chemical, ChemicalType
 
 @app.route('/')
 @app.route('/index')
+@app.route('/index/<status>')
 @login_required
-def index():
-    return render_template('index.html', fields=Field.query.all())
+def index(status=None):
+    if status=='archived':
+        return render_template('index.html', fields=Field.query.filter_by(archived=True).order_by(Field.number).all(), status=status)
+    else:
+        return render_template('index.html', fields=Field.query.filter_by(archived=False).order_by(Field.number).all(), status=status)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,8 +48,10 @@ def register():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
-        db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        if db.session.commit():
+            flash('Error: user registration unsuccessful')
+        else:
+            flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
@@ -58,11 +64,14 @@ def addfield():
             number = form.number.data,
             name = form.name.data,
             land_loc = form.land_loc.data,
-            comment = form.comment.data
+            comment = form.comment.data,
+            archived = form.archived.data
         )
         db.session.add(field)
-        db.session.commit()
-        flash('New field #{} "{}" successfully added.'.format(form.number.data, form.name.data))
+        if db.session.commit():
+            flash('Error: field not added')
+        else:
+            flash('New field #{} "{}" successfully added.'.format(form.number.data, form.name.data))
         return redirect(url_for('index'))
     return render_template('addfield.html', form=form)
 
@@ -72,19 +81,21 @@ def editfield(n):
     field = Field.query.get(n)
     form = FieldFormEdit()
     if form.validate_on_submit():
-        field = Field(
-            name = form.name.data,
-            land_loc = form.land_loc.data,
-            comment = form.comment.data
-        )
-        db.session.commit()
-        flash('Field #{} "{}" successfully updated.'.format(form.number.data, form.name.data))
+        field.name = form.name.data
+        field.land_loc = form.land_loc.data
+        field.comment = form.comment.data
+        field.archived = form.archived.data
+        if db.session.commit():
+            flash('Error: changes not saved')
+        else:
+            flash('Field #{} "{}" successfully updated.'.format(form.number.data, form.name.data))
         return redirect(url_for('index'))
     elif request.method == 'GET':
         form.number.data = field.number
         form.name.data = field.name
         form.land_loc.data = field.land_loc
         form.comment.data = field.comment
+        form.archived.data = field.archived
     elif request.method == 'POST':
         flash('invalid POST')
     return render_template('editfield.html', form=form, field=field)
@@ -102,9 +113,11 @@ def addseed(n):
             field = field
         )
         db.session.add(seed)
-        db.session.commit()
+        if db.session.commit():
+            flash('Error: info not added')
+        else:
+            flash('{} seeded on {} successfully added.'.format(form.name.data, form.date_seeded.data))
         seeds = Seed.query.filter_by(field_id=field.id).order_by(Seed.date_seeded.desc())
-        flash('{} seeded on {} successfully added.'.format(form.name.data, form.date_seeded.data))
         return redirect(url_for('addseed', n=n))
     seeds = Seed.query.filter_by(field_id=field.id).order_by(Seed.date_seeded.desc())
     return render_template('addseed.html', form=form, field=field, seeds=seeds)
@@ -120,8 +133,10 @@ def editseed(n):
         seed.date_harvested = form.date_harvested.data
         seed.bu_yield = form.bu_yield.data
         seed.comment = form.comment.data
-        db.session.commit()
-        flash('{} seeded on {} successfully updated.'.format(form.name.data, form.date_seeded.data))
+        if db.session.commit():
+            flash('Error: changes not saved')
+        else:
+            flash('{} seeded on {} successfully updated.'.format(form.name.data, form.date_seeded.data))
         return redirect(url_for('addseed', n=seed.field_id))
     elif request.method == 'GET':
         form.date_seeded.data = seed.date_seeded
@@ -151,9 +166,11 @@ def addchem(n):
             field = field
         )
         db.session.add(chemical)
-        db.session.commit()
+        if db.session.commit():
+            flash('Error: info not added')
+        else:
+            flash('{}, {}, applied on {} successfully added.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
         chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc()).join(ChemicalType)
-        flash('{}, {}, applied on {} successfully added.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
         return redirect(url_for('addchem', n=n))
     chemicals = Chemical.query.filter_by(field_id=field.id).order_by(Chemical.date_applied.desc()).join(ChemicalType)
     return render_template('addchem.html', form=form, field=field, chemicals=chemicals)
@@ -171,8 +188,10 @@ def editchem(n):
         chemical.rate = form.rate.data
         chemical.wind_dir = form.wind_dir.data
         chemical.comment = form.comment.data
-        db.session.commit()
-        flash('{}, {}, applied on {} successfully updated.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
+        if db.session.commit():
+            flash('Error: changes not saved')
+        else:
+            flash('{}, {}, applied on {} successfully updated.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
         return redirect(url_for('addchem', n=chemical.field_id))
     elif request.method == 'GET':
         form.type.data = chemical.type

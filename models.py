@@ -31,6 +31,7 @@ class Field(db.Model):
     name = db.Column(db.String(32))
     land_loc = db.Column(db.String(32))
     comment = db.Column(db.String(255))
+    archived = db.Column(db.Boolean, nullable=False, default=False)
     seeds = db.relationship('Seed', backref='field', lazy='dynamic')
     chemicals = db.relationship('Chemical', backref='field', lazy='dynamic')
 
