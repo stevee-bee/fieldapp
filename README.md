@@ -10,8 +10,11 @@ The [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tu
 
 ## Screenshots
 
+List of active fields.
 ![List of active fields](screenshots/1_active_fields.png)
 
+List of seeded crops.
 ![List of seeded crops](screenshots/2_seeded_crops.png)
 
+List of applied chemicals.
 ![List of applied chemicals](screenshots/3_applied_chemicals.png)
