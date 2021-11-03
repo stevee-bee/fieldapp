@@ -1,3 +1,5 @@
+## Under Development
+
 This is a Field Management web app for DSE based on concepts learned from...
 
 The Flask tutorial posted in two parts by Giles at the PythonAnywhere blog.
@@ -13,3 +15,11 @@ and...
 The Flask Mega-Tutorial posted by Miguel at blog.miguelgrinberg.com
 
 https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+
+## Screenshots
+
+[List of active fields](screenshots/1_active_fields.png)
+
+[List of seeded crops](screenshots/2_seeded_crops.png)
+
+[List of applied chemicals](screenshots/3_applied_chemicals.png)
