@@ -26,17 +26,18 @@
         </tr>
         {% for chemical in chemicals %}
         <tr>
-            <td>{{ chemical.date_applied }}</td>
-            <!--<td><a href="{{ url_for('editchem', n=chemical.id) }}">{{ chemical.date_applied }}</a></td>-->
+            <td><a href="{{ url_for('editchem', n=chemical.id) }}">{{ chemical.date_applied }}</a></td>
             <td>{{ chemical.chemical_type.name }}</td>
             <td>{{ chemical.name }}</td>
             <td>{{ chemical.rate }}</td>
             <td>{{ chemical.wind_dir }}</td>
         </tr>
+        {% if chemical.comment %}
         <tr>
             <td style="text-align:right">Comment:</td>
             <td colspan=4>{{ chemical.comment }}</td>
         </tr>
+        {% endif %}
         {% endfor %}
     </table>
     {% endif %}

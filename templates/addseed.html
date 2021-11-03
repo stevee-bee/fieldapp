@@ -25,16 +25,17 @@
         </tr>
         {% for seed in seeds %}
         <tr>
-            <td>{{ seed.date_seeded }}</td>
-            <!--<td><a href="{{ url_for('editseed', n=seed.id) }}">{{ seed.date_seeded }}</a></td>-->
+            <td><a href="{{ url_for('editseed', n=seed.id) }}">{{ seed.date_seeded }}</a></td>
             <td>{{ seed.name }}</td>
             <td>{{ seed.date_harvested }}</td>
             <td>{{ seed.bu_yield }}</td>
         </tr>
+        {% if seed.comment %}
         <tr>
             <td style="text-align:right">Comment:</td>
             <td colspan=3>{{ seed.comment }}</td>
         </tr>
+        {% endif %}
         {% endfor %}
     </table>
     {% endif %}

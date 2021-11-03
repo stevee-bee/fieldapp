@@ -115,15 +115,13 @@ def editseed(n):
     seed = Seed.query.get(n)
     form = SeedFormEdit()
     if form.validate_on_submit():
-        seed = Seed(
-            date_seeded = form.date_seeded.data,
-            name = form.name.data,
-            date_harvested = form.date_harvested.data,
-            bu_yield = form.bu_yield.data,
-            comment = form.comment.data
-        )
+        seed.date_seeded = form.date_seeded.data
+        seed.name = form.name.data
+        seed.date_harvested = form.date_harvested.data
+        seed.bu_yield = form.bu_yield.data
+        seed.comment = form.comment.data
         db.session.commit()
-        flash('{} in field {} seeded on {} successfully updated.'.format(form.name.data, seed.field_id, form.date_seeded.data))
+        flash('{} seeded on {} successfully updated.'.format(form.name.data, form.date_seeded.data))
         return redirect(url_for('addseed', n=seed.field_id))
     elif request.method == 'GET':
         form.date_seeded.data = seed.date_seeded
@@ -167,14 +165,12 @@ def editchem(n):
     form = ChemicalForm()
     form.type.choices = [(g.id, g.name) for g in ChemicalType.query.order_by('name')]
     if form.validate_on_submit():
-        chemical = Chemical(
-            type = form.type.data,
-            name = form.name.data,
-            date_applied = form.date_applied.data,
-            rate = form.rate.data,
-            wind_dir = form.wind_dir.data,
-            comment = form.comment.data
-        )
+        chemical.type = form.type.data
+        chemical.name = form.name.data
+        chemical.date_applied = form.date_applied.data
+        chemical.rate = form.rate.data
+        chemical.wind_dir = form.wind_dir.data
+        chemical.comment = form.comment.data
         db.session.commit()
         flash('{}, {}, applied on {} successfully updated.'.format(dict(form.type.choices).get(form.type.data), form.name.data, form.date_applied.data))
         return redirect(url_for('addchem', n=chemical.field_id))

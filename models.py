@@ -48,7 +48,7 @@ class Seed(db.Model):
     field_id = db.Column(db.Integer, db.ForeignKey('field.id'))
 
     def __repr__(self):
-        return '<Seed {}>'.format(self.name)
+        return '<Seed.id={} .name={} .date_seeded={} .date_harvested={} .bu_yield={} .comment={} .field_id={}>'.format(self.id, self.name, self.date_seeded, self.date_harvested, self.bu_yield, self.comment, self.field_id)
 
 
 class Chemical(db.Model):
@@ -62,7 +62,7 @@ class Chemical(db.Model):
     field_id = db.Column(db.Integer, db.ForeignKey('field.id'))
 
     def __repr__(self):
-        return '<Chemical {}>'.format(self.name)
+        return '<Chemical.id={} .type={} .name={} .date_applied={} .rate={} .wind_dir={} .comment={} .field_id={}>'.format(self.id, self.type, self.name, self.date_applied, self.rate, self.wind_dir, self.comment, self.field_id)
 
 
 class ChemicalType(db.Model):
