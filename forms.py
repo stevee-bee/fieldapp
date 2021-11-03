@@ -36,7 +36,7 @@ class FieldForm(FlaskForm):
     name = StringField('Field name', validators=[DataRequired(), Length(max=32)])
     land_loc = StringField('Land location', validators=[Length(max=32)])
     comment = TextAreaField('Comments', validators=[Length(max=255)])
-    archived = BooleanField('Archive')
+    archived = BooleanField('Inactive')
     submit = SubmitField('Save')
 
     def validate_number(self, number):
@@ -50,7 +50,7 @@ class FieldFormEdit(FlaskForm):
     name = StringField('Field name', validators=[DataRequired(), Length(max=32)])
     land_loc = StringField('Land location', validators=[Length(max=32)])
     comment = TextAreaField('Comments', validators=[Length(max=255)])
-    archived = BooleanField('Archive')
+    archived = BooleanField('Inactive')
     submit = SubmitField('Save')
 
 
